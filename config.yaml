@@ -1,0 +1,47 @@
+paths:
+  VM_PATH: "/home/rodriguez/Documents/logs/vm/"
+  LOGS_DIR: "/home/rodriguez/Documents/logs/"
+
+keys:
+  FORWARD_KEY: "w"
+  LEFT_KEY: "a"
+  RIGHT_KEY: "d"
+  FINISH_KEY: "f"
+
+feature_matching:
+  descriptor: "SuperGlue"
+
+thresholds:
+  confidence: 0.8
+
+logs:
+  matched_points: False
+  pc: False
+  current_imgs: False
+
+mode:
+  color: True
+
+registration:
+  alignment: 'RANSAC'
+  icp: 'point_to_point'
+  max_iteration: 10000
+  distance_threshold: 10
+  voxel_size: 2.5
+  visualization: False
+
+rscs:
+  coverageLim: 0.95
+  coverSphereRad: 2.0
+
+navigation:
+  fit_threshold: 0.7
+  forward_threshold: 0.5
+  lateral_threshold: 0.2
+  yaw_threshold: 10
+
+comments:
+  # 1: "Verify the pc registration process"
+  # 2: "Implemente initial pose estimation using DL"
+  # 3: "Implement traditional feature descriptors and matchers"
+  # 4: "The best results (until step 28) are using point_to_point, sg and without initial alignment"
