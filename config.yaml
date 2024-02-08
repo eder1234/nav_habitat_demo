@@ -23,7 +23,7 @@ mode:
   color: True
 
 registration:
-  alignment: 'RANSAC'
+  alignment: None
   icp: 'point_to_point'
   max_iteration: 10000
   distance_threshold: 10
