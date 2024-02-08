@@ -28,16 +28,7 @@ from modules.registration import Registration
 from modules.point_cloud import PointCloud
 from modules.feature_matcher import FeatureMatcher
 from modules.image_processor import ImageProcessor
-
-
-def transform_rgb_bgr(image):
-    return image[:, :, [2, 1, 0]]
-
-def transform_depth(image):
-    depth_image = (1.0 - (image / np.max(image))) * 255.0
-    depth_image = depth_image.astype(np.uint8)
-    return depth_image
-
+from modules.localization import Localization
 
 
 def demo():
@@ -67,6 +58,7 @@ def demo():
     pc = PointCloud(config=config)
     registration = Registration(config=config)
     nav = NavigationPolicy(config=config)
+    loc = Localization(config=config)
 
     current_color, current_depth = ip.display_current_images(observations["rgb"], observations["depth"])
     vm.display_visual_memory(vm_image_index)
@@ -75,7 +67,7 @@ def demo():
         target_color, target_depth = vm.load_vm_images(vm_image_index)
 
         vm.save_images(current_color, current_depth, count_steps)
-
+        
         # Feature matching part
         # Assume SuperGlue is used for simplicity; adapt as needed for other methods
         print("Using SuperGlue (only this one is currently implemented).")
@@ -101,7 +93,7 @@ def demo():
 
         print('Step: ', count_steps)
         keystroke = cv2.waitKey(0)
-        vm_image_index, action = nav.handle_keystroke(keystroke, vm_image_index, icp_result)
+        vm_image_index, action = nav.handle_keystroke(keystroke, vm_image_index, icp_result, current_color)
 
         if action == "finish":
             break
@@ -115,5 +107,4 @@ def demo():
     print("Episode finished after {} steps.".format(count_steps))
 
 if __name__ == "__main__":
-    #args = parse_args()
     demo()
