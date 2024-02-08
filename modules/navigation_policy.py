@@ -1,5 +1,5 @@
-
 from modules.visual_memory import VisualMemory
+from modules.localization import Localization
 import habitat
 from habitat.sims.habitat_simulator.actions import HabitatSimActions
 import os
@@ -14,7 +14,7 @@ class KeyBindings:
     MOVE_KEY = "m"
     RESET_VM_KEY = "k"
     NEXT_VM_KEY = "0"
-
+    LOCALIZATION_KEY = "l"  # Added localization key
 
 class NavigationPolicy:
     def __init__(self, config=None, registration_result=None, visual_memory=None):
@@ -26,6 +26,7 @@ class NavigationPolicy:
         self.yaw_threshold = config['navigation']['yaw_threshold']
         self.vm_path = config['paths']['VM_PATH']
         self.visual_memory = visual_memory or VisualMemory(config)
+        self.localization = Localization(config)
 
     def print_success(self, message):
         green = "\033[92m"
@@ -82,7 +83,7 @@ class NavigationPolicy:
         else:
             return action_forward
         
-    def handle_keystroke(self, keystroke, vm_image_index, registration_result):
+    def handle_keystroke(self, keystroke, vm_image_index, registration_result, current_color_image=None):
         if keystroke == ord(KeyBindings.MOVE_KEY):
             computed_action = 'Stop'
 
@@ -121,9 +122,20 @@ class NavigationPolicy:
             vm_image_index = (vm_image_index + 1) % len(os.listdir(self.vm_path + "color/"))
             self.visual_memory.display_visual_memory(vm_image_index)
             return vm_image_index, None  # No action to execute
+        
+        elif keystroke == ord(KeyBindings.LOCALIZATION_KEY):
+            if current_color_image is not None:
+                # Call the localization method with the current color image
+                best_match_name, best_distance_name, max_matches, min_avg_distance = self.localization.localization_in_visual_memory(current_color_image)
+                print(f"Best match image: {best_match_name} | Number of Matches: {max_matches}")
+                print(f"Best distance image: {best_distance_name} | Average Distance: {min_avg_distance:.2f}")
+            else:
+                print("No current image provided for localization.")
+            return vm_image_index, None  # No action to execute after localization
 
         else:
             return vm_image_index, None  # No action for unrecognized keystrokes
 
         # For actions that involve moving the agent
         return vm_image_index, action
+    

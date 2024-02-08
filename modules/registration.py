@@ -193,7 +193,7 @@ class Registration:
 
         self.voxel_size = np.mean([optimal_voxel_size1, optimal_voxel_size2])
 
-        if self.config['registration']['alignment'] == 'RANSAC':
+        if self.config['registration']['alignment'] == 'RANSAC': # it should be named FPFH
             self.initial_pose = self.estimate_initial_alignment_ransac()
 
         if self.config['registration']['alignment'] == 'RSCS':
